@@ -98,8 +98,10 @@ Router::onRequest(
     RequestHandler* handler,
     HTTPMessage* message) noexcept
 {
+
+    try {	
     // Handling incoming request
-    auto path = message->getURL();
+    auto path = message->getPath();
     r3::MatchEntry entry(path.c_str());
 
     auto method = message->getMethod();
@@ -109,7 +111,7 @@ Router::onRequest(
         return new DefaultRouteHandler(500, "Internal Server Error");
     }
 
-    entry.set_request_method(AbstractRoute::proxygen_to_r3_method(method.get()));
+    entry.set_request_method(AbstractRoute::proxygen_to_r3_method(method.value()));
 
     r3::Route match = this->tree.match_route(entry);
     if (!match)
@@ -135,6 +137,12 @@ Router::onRequest(
         params.insert(make_pair(string(slug), string(token)));
     }
     return route->handler(this, message, params);
+    } catch(std::exception &e) {
+	    LOG(ERROR)<<"Took an exception while handling http request "<<e.what();
+    } catch(...) {
+	    LOG(ERROR)<<"Took an unknown exception while handling http request";
+    }
+    return new DefaultRouteHandler(500, "Internal Server Error");
 }
 
 }

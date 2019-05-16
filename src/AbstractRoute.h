@@ -26,7 +26,7 @@
 #include <proxygen/lib/http/HTTPMethod.h>
 #include <proxygen/lib/http/HTTPMessage.h>
 #include <proxygen/httpserver/RequestHandler.h>
-#include <r3.hpp>
+#include <r3/r3.hpp>
 
 using namespace std;
 
